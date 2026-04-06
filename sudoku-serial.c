@@ -1,3 +1,4 @@
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -110,6 +111,8 @@ int main(int argc, char *argv[]) {
 	int *grid;
 	int r;
 	int c;
+	double exec_time;
+	int solved;
 
 	if (argc != 2) {
 		fprintf(stderr, "Uso: %s <ficheiro_entrada>\n", argv[0]);
@@ -163,7 +166,12 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	if (solve_sudoku(grid, n, l)) {
+	exec_time = -omp_get_wtime();
+	solved = solve_sudoku(grid, n, l);
+	exec_time += omp_get_wtime();
+	fprintf(stderr, "%.6fs\n", exec_time);
+
+	if (solved) {
 		print_grid(grid, n);
 	} else {
 		printf("Nenhuma solução\n");
